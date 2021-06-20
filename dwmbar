@@ -1,0 +1,23 @@
+#!/bin/bash
+
+DELIMITER="|"
+
+status() {
+	echo "web: "$(sed "s/down//;s/up/🌏/" /sys/class/net/wlo1/operstate)
+	echo "$DELIMITER"
+	echo "BAT: $(cat /sys/class/power_supply/BAT1/capacity)%"
+	echo "$DELIMITER"
+	echo "$(cat /sys/class/power_supply/BAT1/status)"
+	echo "$DELIMITER"
+	date "+%Y-%m-%d %H:%M (%a)"
+	echo "$DELIMITER"
+	echo "Mem: " $(free -h | awk '/^Mem:/ {print $3 "/" $2}')
+	echo "$DELIMITER"
+	echo "TEMP: " $(sensors | awk '/^Package/ {print $4}')
+}
+
+while true
+do
+	xsetroot -name "$(status | tr '\n' ' ')"
+	sleep 1m
+done
